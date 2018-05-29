@@ -34,7 +34,7 @@ def generate_layout(url):
 				{'label': 'structure.lattice.volume', 'value': 'structure.lattice.volume'},
 				{'label': 'structure.lattice.matrix', 'value': 'structure.lattice.matrix'},
             ],
-            value=['MTL', 'SF'],
+            value=None,
             multi=True,
             id='input'
         ),
@@ -43,8 +43,13 @@ def generate_layout(url):
 
 @app.callback(Output('output', 'children'), [Input('input', 'value')])
 def display_output(value):
-    return 'Your query should be: "\{{}\:<thing_to_match>}"'.format(value)
-
+    if value is None:
+	    return 'Your query should be: {}'
+    else:
+        query_string = ['"'"{}"'":<thing_to_match>'.format(entry) for entry in value]
+        query_string = ", ".join(query_string)
+        query_string = "{{" + query_string + "}}"
+        return 'Your query should be: ' + query_string
 
 if __name__ == '__main__':
     print("starting...")
