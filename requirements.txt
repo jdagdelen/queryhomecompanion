@@ -1,0 +1,15 @@
+dash
+dash-auth
+dash-core-components
+dash-html-components
+dash-renderer
+flask
+Flask-Caching
+matplotlib
+gunicorn
+numpy
+pymongo
+plotly
+pandas
+pymatgen
+regex
