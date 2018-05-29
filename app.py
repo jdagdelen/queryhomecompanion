@@ -23,6 +23,8 @@ def generate_layout(url):
                 {'label': 'material_id', 'value': 'material_id'},
 				{'label': 'mpid', 'value': 'material_id'},
                 {'label': 'pretty_formula', 'value': 'pretty_formula'},
+				{'label': 'formula', 'value': 'pretty_formula'},
+				{'label': 'chemical formula', 'value': 'pretty_formula'},
 				{'label': 'structure.sites', 'value': 'structure.sites'},
 				{'label': 'structure.lattice', 'value': 'structure.lattice'},
 				{'label': 'structure.lattice.a', 'value': 'structure.lattice.a'},
@@ -48,7 +50,7 @@ def display_output(value):
     else:
         query_string = ['"'"{}"'":<thing_to_match>'.format(entry) for entry in value]
         query_string = ", ".join(query_string)
-        query_string = "{{" + query_string + "}}"
+        query_string = "{" + query_string + "}"
         return 'Your query should be: ' + query_string
 
 if __name__ == '__main__':
