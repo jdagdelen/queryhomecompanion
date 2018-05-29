@@ -41,6 +41,9 @@ def generate_layout(url):
         html.Div(id='output')
     ])
 
+@app.callback(Output('output', 'children'), [Input('input', 'value')])
+def display_output(value):
+    return 'Your query should be: "\{{}\:<thing_to_match>}"'.format(value)
 
 
 if __name__ == '__main__':
