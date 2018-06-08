@@ -4,6 +4,7 @@ import dash_html_components as html
 import dash_core_components as dcc
 from dash.dependencies import Input, Output, State, Event
 import json
+from model import format_query_string, initialize_options
 
 app = dash.Dash()
 server = app.server
@@ -14,42 +15,15 @@ app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     html.Div(id='page-content')])
 
-field_options = [
-    {'label': 'mpid', 'value': 'material_id'},
-    {'label': 'formula', 'value': 'pretty_formula'},
-    {'label': 'anonymous formula', 'value': 'snl_final.anonymized_formula'},
-    {'label': 'chemical formula', 'value': 'pretty_formula'},
-    {'label': 'bulk modulus (Reuss)', 'value': 'elasticity.K_Voigt'},
-    {'label': 'bulk modulus (Voigt)', 'value': 'elasticity.K_Reuss'},
-    {'label': 'bulk modulus (VRH)', 'value': 'elasticity.K_VRH'},
-    {'label': 'bulk modulus (Voigt Reuss Hill)', 'value': 'elasticity.K_Voigt_Reuss_Hill'},
-    {'label': 'shear modulus (Reuss)', 'value': 'elasticity.G_Voigt'},
-    {'label': 'shear modulus (Voigt)', 'value': 'elasticity.G_Reuss'},
-    {'label': 'shear modulus (VRH)', 'value': 'elasticity.G_VRH'},
-    {'label': 'shear modulus (Voigt Reuss Hill)', 'value': 'elasticity.G_Voigt_Reuss_Hill'},
-    {'label': 'stability (e_above_hull < 25 meV)', 'value': 'e_above_hull'},
-    {'label': 'energy above hull', 'value': 'e_above_hull'},
-    {'label': 'bravais lattice', 'value': 'spacegroup.crystal_system'},
-    {'label': 'crystal system', 'value': 'spacegroup.crystal_system'},
-]
 
 # TODO: add logic for filling out questions like is_metal, tetragonal, etc
 
-mapidoc = json.load(open("mapidoc.json"))
+(field_options, operator_options, value_options) = initialize_options()
 
-for entry in mapidoc:
-    if entry is not None and len(entry) > 0 and "@" not in entry:
-        entry = entry.replace("/", ".")
-        field_options.append({'label': entry, 'value': entry})
-
-value_options = []
-operators = ["$lt", "$gt", "$lte", "$gte", "True", "False", "$in", "$nin"]
-for entry in operators:
-    if entry is not None and len(entry) > 0:
-        value_options.append({'label': entry, 'value': entry})
-
-
-@app.callback(Output('page-content', 'children'), [Input('url', 'pathname')])
+@app.callback(
+    Output('page-content', 'children'),
+    [Input('url', 'pathname')]
+)
 def generate_layout(url):
     return html.Div([
         html.Label('Welcome to A Query Home Companion. Build a query below.', style={"font-size": "20px"}),
@@ -61,28 +35,47 @@ def generate_layout(url):
                     multi=True,
                     id='field',
                     placeholder="Field (start typing to narrow results)"
-                )], style={"width": "30%", "paddingBottom": "10px", "paddingTop": "10px"}),
+                )], style={"width": "40%", "paddingBottom": "10px", "paddingTop": "10px"}, className="six columns"),
+            html.Div([
+                dcc.Dropdown(
+                    options=operator_options,
+                    value=None,
+                    multi=True,
+                    id='operator',
+                )], style={"width": "10%", "paddingBottom": "10px", "paddingTop": "10px"}, className="six columns"),
             html.Div([
                 dcc.Dropdown(
                     options=value_options,
                     value=None,
                     multi=True,
                     id='value',
-                )], style={"width": "30%", "paddingBottom": "10px"}),
+                )], style={"width": "40%", "paddingBottom": "10px", "paddingTop": "10px"}, className="six columns"),
+        ]),
+        html.Div([
+            html.Label('Your query should be: ', style={"font-size": "20px"}),
             html.Div(id='output', style={"font-size": "20px"})
-        ], className='two columns')
+        ], className="four columns")
     ])
 
+#
+# @app.callback(
+#     [Input('field', 'value'), Input('field', 'value'), Input('value', 'value')]
+# )
+# def update_options(field, operator, value):
+#     if operator:
+#         return None
+#     else:
+#         return format_query_string(field, operator, value)
 
-@app.callback(Output('output', 'children'), [Input('field', 'value'), Input('value', 'value')])
-def display_output(field, value):
+@app.callback(
+    Output('output', 'children'),
+    [Input('field', 'value'), Input('field', 'value'), Input('value', 'value')]
+)
+def display_output(field, operator, value):
     if field is None:
-        return 'Your query should be: {}'
+        return '{}'
     else:
-        query_string = ['"'"{}"'":<thing_to_match>'.format(entry) for entry in field]
-        query_string = ", ".join(query_string)
-        query_string = "{" + query_string + "}"
-        return 'Your query should be: ' + query_string
+        return format_query_string(field, operator, value)
 
 
 ### CSS settings ###
@@ -101,6 +94,10 @@ for css in css_files:
         rel='stylesheet',
         href='/static/css/' + css
     ))
+
+app.css.append_css({
+    'external_url': 'https://codepen.io/chriddyp/pen/bWLwgP.css'
+})
 
 if __name__ == '__main__':
     print("starting...")
