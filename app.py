@@ -17,6 +17,7 @@ app.layout = html.Div([
 
 
 # TODO: add logic for filling out questions like is_metal, tetragonal, etc
+# rachel did something!
 
 (field_options, operator_options, value_options) = initialize_options()
 
