@@ -2,81 +2,66 @@
 import dash
 import dash_html_components as html
 import dash_core_components as dcc
-from dash.dependencies import Input, Output, State, Event
-import json
-from model import format_query_string, initialize_options
+import callbacks
+from model import initialize_field_options
 
 app = dash.Dash()
 server = app.server
 
 app.config.supress_callback_exceptions = True
+app.title = "A Query Home Companion"
 
+
+###### Page Header #######
+
+header = html.Div([
+    html.Label('Welcome to A Query Home Companion. Explore the searchable fields below.',
+               style={"font-size": "20px"}),
+])
+
+
+###### Query Area #######
+
+query = html.Div([], id='page-content')
+
+options_dropdown = html.Div(
+    dcc.Dropdown(
+        options=initialize_field_options(),
+        value=None,
+        multi=False,
+        id='options_selection',
+        placeholder="What would you like to search?"
+    )
+)
+#
+#
+# ###### Buttons #######
+# buttons = html.Div([
+#     html.Button("AND",
+#                 id="button_add_query",
+#                 className="button-primary"),
+# ], className="four columns")
+
+
+###### Results #######
+# results = html.Div([
+#     html.Label('Your query should be: ', style={"font-size": "20px"}),
+#     html.Div(id='output', style={"font-size": "20px"})
+# ])
+results = html.Div(callbacks.get_readme(None))
+
+###### Main layout #######
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
-    html.Div(id='page-content')])
+    header,
+    html.Div(style={"paddingTop": "10px", "paddingBottom": "10px"}),
+    html.Div(options_dropdown, className="twelve columns"),
+    html.Div([
+        results
+    ], style={"paddingTop": "50px", "paddingBottom": "10px"}, id="page-content")
+], className="container main-container")
 
-
-# TODO: add logic for filling out questions like is_metal, tetragonal, etc
-# rachel did something!
-
-(field_options, operator_options, value_options) = initialize_options()
-
-@app.callback(
-    Output('page-content', 'children'),
-    [Input('url', 'pathname')]
-)
-def generate_layout(url):
-    return html.Div([
-        html.Label('Welcome to A Query Home Companion. Build a query below.', style={"font-size": "20px"}),
-        html.Div([
-            html.Div([
-                dcc.Dropdown(
-                    options=field_options,
-                    value=None,
-                    multi=True,
-                    id='field',
-                    placeholder="Field (start typing to narrow results)"
-                )], style={"width": "40%", "paddingBottom": "10px", "paddingTop": "10px"}, className="six columns"),
-            html.Div([
-                dcc.Dropdown(
-                    options=operator_options,
-                    value=None,
-                    multi=True,
-                    id='operator',
-                )], style={"width": "10%", "paddingBottom": "10px", "paddingTop": "10px"}, className="six columns"),
-            html.Div([
-                dcc.Dropdown(
-                    options=value_options,
-                    value=None,
-                    multi=True,
-                    id='value',
-                )], style={"width": "40%", "paddingBottom": "10px", "paddingTop": "10px"}, className="six columns"),
-        ]),
-        html.Div([
-            html.Label('Your query should be: ', style={"font-size": "20px"}),
-            html.Div(id='output', style={"font-size": "20px"})
-        ], className="four columns")
-    ])
-
-#
-# @app.callback(
-#     [Input('field', 'value'), Input('field', 'value'), Input('value', 'value')]
-# )
-# def update_options(field, operator, value):
-#     if operator:
-#         return None
-#     else:
-#         return format_query_string(field, operator, value)
-
-@app.callback(
-    Output('output', 'children'),
-    [Input('field', 'value'), Input('field', 'value'), Input('value', 'value')]
-)
-def display_output(field, operator, value):
-    if field is None:
-        return '{}'
-    else:
-        return format_query_string(field, operator, value)
+callbacks.bind(app)
 
 
 ### CSS settings ###
@@ -100,6 +85,8 @@ app.css.append_css({
     'external_url': 'https://codepen.io/chriddyp/pen/bWLwgP.css'
 })
 
+
+####### Main Loop ########
 if __name__ == '__main__':
     print("starting...")
     app.run_server(debug=True)

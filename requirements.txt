@@ -13,3 +13,4 @@ plotly
 pandas
 pymatgen
 regex
+-e git://github.com/vtshitoyan/dash-materialsintelligence#egg=dash_materialsintelligence
