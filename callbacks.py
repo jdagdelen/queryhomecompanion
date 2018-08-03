@@ -8,7 +8,7 @@ import errno
 def get_readme(option):
     if option is None:
         return ""
-    path = "mapidoc/materials/" + option.replace(".", "/") +"/README.md"
+    path = "readmes/materials/" + option.replace(".", "/") +"/README.md"
     with open(path, 'r') as file:
         readme = file.read()
     return html.Div([html.H2(option, style={"color":"teal"}), dcc.Markdown(readme)])
