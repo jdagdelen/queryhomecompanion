@@ -4,15 +4,17 @@ import json
 
 
 custom_fields = {
-    "mpid": "material_id", "formula": "pretty_formula", "anonymous formula": "snl_final.anonymized_formula",
-    "chemical formula": "pretty_formula", "bulk modulus (Voigt)": "elasticity.K_Voigt",
+    "mpid": "material_id", "structure": "structure", "pretty_formula (i.e. formula, chemical formula)": "pretty_formula",
+    "anonymous formula": "snl_final.anonymized_formula", "bulk modulus (Voigt)": "elasticity.K_Voigt",
     "bulk modulus (Reuss)": "elasticity.K_Reuss", "bulk modulus (VRH)": "elasticity.K_VRH",
     "bulk modulus (Voigt Reuss Hill)": "elasticity.K_Voigt_Reuss_Hill",
     'shear modulus (Reuss)': 'elasticity.G_Reuss', 'shear modulus (Voigt)': 'elasticity.G_Voigt',
     'shear modulus (VRH)': 'elasticity.G_VRH', 'shear modulus (Voigt Reuss Hill)': 'elasticity.G_Voigt_Reuss_Hill',
-    'stability': 'e_above_hull', "energy above hull": "e_above_hull", 'bravais lattice': "spacegroup.crystal_system",
-    'crystal system': 'spacegroup.crystal_system', "bandgap": "band_gap",
-    "alphabetied formula": 'snl.reduced_cell_formula_abc',
+    'e_above_hull (i.e. stability, energy above hull)': 'e_above_hull', "energy above hull": "e_above_hull",
+    'spacegroup.crystal_system (bravais lattice, crystal system)': "spacegroup.crystal_system",
+    "band_gap (i.e. bandgap)": "band_gap", "band_structure (i.e. electronic structure)": "band_structure",
+    "snl.reduced_cell_formula_abc (alphabetized formula)": 'snl.reduced_cell_formula_abc',
+    "dos (i.e. density of states, electronic structure)": "dos",
 }
 
 

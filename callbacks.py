@@ -9,7 +9,7 @@ def get_readme(option):
     path = "mapidoc/materials/" + option.replace(".", "/") +"/README.md"
     with open(path, 'r') as file:
         readme = file.read()
-    return html.Div([html.H2(option), dcc.Markdown(readme)])
+    return html.Div([html.H2(option, style={"color":"teal"}), dcc.Markdown(readme)])
 
 def bind(app):
     @app.callback(
